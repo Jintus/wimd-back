@@ -12,3 +12,41 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+    id Int @default(autoincrement()) @id
+    email String @unique
+    locations Location[]
+}
+
+model Location {
+    id Int @default(autoincrement()) @id
+    user User @relation(fields: [userId], references: [id])
+    userId Int
+    name String
+    drawers Drawer[]
+
+    @@unique([userId, name])
+}
+
+model Drawer {
+    location Location @relation(fields: [locationId], references: [id])
+    locationId Int
+    name String
+
+    @@id([locationId, name])
+}
+
+enum QuantityUnit {
+    GRAM
+    LITER
+    UNIT
+}
+
+model SealedFood {
+    barCode String @id
+    name String
+    quantity Int
+    unit QuantityUnit
+    expiryDate DateTime
+}
